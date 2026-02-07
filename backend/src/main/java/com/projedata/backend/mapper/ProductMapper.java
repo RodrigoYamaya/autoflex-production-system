@@ -1,8 +1,10 @@
 package com.projedata.backend.mapper;
 
+import com.projedata.backend.model.dto.CompositionItemResponseDTo;
 import com.projedata.backend.model.dto.ProductRequestDto;
 import com.projedata.backend.model.dto.ProductResponsetDto;
 import com.projedata.backend.model.entities.Product;
+import com.projedata.backend.model.entities.ProductComposition;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -15,4 +17,8 @@ public interface ProductMapper {
 
     //Entidade -> response
     ProductResponsetDto toDto(Product entity);
+
+    @Mapping(target = "rawMaterialId", source = "rawMaterial.id")
+    @Mapping(target = "rawMaterialName", source = "rawMaterial.name")
+    CompositionItemResponseDTo toDto(ProductComposition entity);
 }

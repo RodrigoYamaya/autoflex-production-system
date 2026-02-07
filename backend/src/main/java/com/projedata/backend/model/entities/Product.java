@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,7 @@ public class Product {
     @OneToMany(mappedBy = "product")
     @ToString.Exclude
     @Setter(AccessLevel.NONE)
-    private List<ProductComposition> compositions;
+    private List<ProductComposition> compositions = new ArrayList<>();
 
 
 }
