@@ -25,9 +25,8 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    @Setter(AccessLevel.NONE)
     private List<ProductComposition> compositions = new ArrayList<>();
 
 

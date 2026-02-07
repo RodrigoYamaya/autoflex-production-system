@@ -7,12 +7,14 @@ import com.projedata.backend.model.dto.ProductResponsetDto;
 import com.projedata.backend.model.entities.Product;
 import com.projedata.backend.model.entities.ProductComposition;
 import com.projedata.backend.model.entities.RawMaterial;
+import com.projedata.backend.repository.ProductCompositionRepository;
 import com.projedata.backend.repository.ProductRepository;
 import com.projedata.backend.repository.RawMaterialRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,32 +24,44 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final RawMaterialRepository rawMaterialRepository;
     private final ProductMapper productMapper;
+    private final ProductCompositionRepository productCompositionRepository;
 
     @Transactional
-    public ProductResponsetDto save(ProductRequestDto Productdto) {
-        Product product = productMapper.toEntity(Productdto);
+    public ProductResponsetDto save(ProductRequestDto productRequestDto) {
+        Product product = productMapper.toEntity(productRequestDto);
 
-        if (Productdto.compositions() != null && !Productdto.compositions().isEmpty()) {
-            for (CompositionItemRequestDTo itemDto : Productdto.compositions()) {
+        product = productRepository.save(product);
+
+        List<ProductComposition> listaParaSalvar = new ArrayList<>();
+
+        if (productRequestDto.compositions() != null && !productRequestDto.compositions().isEmpty()) {
+            for (CompositionItemRequestDTo itemDto : productRequestDto.compositions()) {
 
                 RawMaterial rawMaterial = rawMaterialRepository.findById(itemDto.rawMaterialId())
-                        .orElseThrow(() -> new RuntimeException("Matéria-prima não encontrada: ID " + itemDto.rawMaterialId()));
+                        .orElseThrow(() -> new RuntimeException("Matéria-prima não encontrada"));
 
                 ProductComposition composition = new ProductComposition();
                 composition.setProduct(product);
                 composition.setRawMaterial(rawMaterial);
                 composition.setRequiredQuantity(itemDto.requiredQuantity());
 
-                product.getCompositions().add(composition);
+                listaParaSalvar.add(composition);
             }
+
+            productCompositionRepository.saveAll(listaParaSalvar);
+
+            product.setCompositions(listaParaSalvar);
         }
 
-        Product savedProduct = productRepository.save(product);
-        return productMapper.toDto(savedProduct);
+        return productMapper.toDto(product);
+        //resumo sobre o problema que estava acontecendo que os ingredientes não estava salvando [] null.
+        //estava em si na regra de negocio que primeiro tinhamos que salvar o product primeiro apos ID desse product salvar os ingrdientes que estava causando conflito pai/filho precisamos ID
+        //O que estava ocorrendo que estava tentando salvar filho antes do pai e não tinhamos o ID product que ingredientes tb_productComposition fica [] não ID comosição
     }
 
+    @Transactional
     public List<ProductResponsetDto> findAll() {
-        return productRepository.findAllByOrderByPriceDesc().stream()
+        return productRepository.findAll().stream()
                 .map(productMapper::toDto)
                 .toList();
     }
