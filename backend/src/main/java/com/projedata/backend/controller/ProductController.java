@@ -28,4 +28,19 @@ public class ProductController {
     public ResponseEntity<List<ProductResponsetDto>> findAll() {
         return ResponseEntity.ok(productService.findAll());
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable(value = "id") long id) {
+        productService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body("product com o ID " + id + " deletado com sucesso.");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponsetDto> update(@PathVariable Long id, @RequestBody @Valid ProductRequestDto dto) {
+        ProductResponsetDto updatedProduct = productService.update(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
+    }
+
+
+
 }

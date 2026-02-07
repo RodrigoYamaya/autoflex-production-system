@@ -1,5 +1,7 @@
 package com.projedata.backend.controller;
 
+import com.projedata.backend.model.dto.ProductRequestDto;
+import com.projedata.backend.model.dto.ProductResponsetDto;
 import com.projedata.backend.model.dto.RawMaterialRequestDTo;
 import com.projedata.backend.model.dto.RawMaterialResponseDTo;
 import com.projedata.backend.service.RawMaterialService;
@@ -28,6 +30,19 @@ public class RawMaterialController {
     @GetMapping
     public ResponseEntity<List<RawMaterialResponseDTo>> findAll() {
         return ResponseEntity.ok(rawMaterialService.findAll());
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable(value = "id") long id) {
+        rawMaterialService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body("material com o ID " + id + " deletado com sucesso.");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RawMaterialResponseDTo> update(@PathVariable Long id, @RequestBody @Valid RawMaterialRequestDTo dto) {
+        RawMaterialResponseDTo updatedMaterial = rawMaterialService.update(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedMaterial);
     }
 
 

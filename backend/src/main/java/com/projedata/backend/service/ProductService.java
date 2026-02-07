@@ -66,4 +66,44 @@ public class ProductService {
                 .toList();
     }
 
+
+    @Transactional
+    public void delete(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new RuntimeException("Produto não encontrado para exclusão");
+        }
+        productRepository.deleteById(id);
+    }
+
+
+    @Transactional
+    public ProductResponsetDto update(Long id, ProductRequestDto dto) {
+        Product entity = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        entity.setName(dto.name());
+        entity.setPrice(dto.price());
+
+        if (dto.compositions() != null) {
+            entity.getCompositions().clear();
+
+            for (CompositionItemRequestDTo itemDto : dto.compositions()) {
+
+                RawMaterial rawMaterial = rawMaterialRepository.findById(itemDto.rawMaterialId())
+                        .orElseThrow(() -> new RuntimeException("Matéria-prima não encontrada"));
+
+                ProductComposition composition = new ProductComposition();
+                composition.setProduct(entity);
+                composition.setRawMaterial(rawMaterial);
+                composition.setRequiredQuantity(itemDto.requiredQuantity());
+
+                entity.getCompositions().add(composition);
+            }
+        }
+
+        entity = productRepository.save(entity);
+
+        return productMapper.toDto(entity);
+    }
+
 }

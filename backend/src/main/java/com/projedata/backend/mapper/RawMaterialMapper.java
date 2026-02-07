@@ -14,5 +14,5 @@ public interface RawMaterialMapper {
     RawMaterial toEntity(RawMaterialRequestDTo dto);
 
     // Entidade -> Response
-    RawMaterialResponseDTo toResponse(RawMaterial entity);
+    RawMaterialResponseDTo toDto(RawMaterial entity);
 }
