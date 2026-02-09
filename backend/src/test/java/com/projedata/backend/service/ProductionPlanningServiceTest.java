@@ -37,7 +37,7 @@ class ProductionPlanningServiceTest {
     private ProductionPlanningService productionPlanningService;
 
     @Test
-    // @DisplayName: Nome que vai constar no relatório de testes.
+    // @DisplayName:Eo Nome que vai constar no relatório de testes.
     @DisplayName("Deve priorizar produtos mais caros e não listar produtos sem estoque")
     void shouldPrioritizeExpensiveProductsAndCalculateCorrectly() {
         // --- CENÁRIO (GIVEN) ---//
