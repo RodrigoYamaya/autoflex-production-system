@@ -1,7 +1,6 @@
 package com.projedata.backend.controller;
 
-import com.projedata.backend.model.dto.ProductRequestDto;
-import com.projedata.backend.model.dto.ProductResponsetDto;
+
 import com.projedata.backend.model.dto.RawMaterialRequestDTo;
 import com.projedata.backend.model.dto.RawMaterialResponseDTo;
 import com.projedata.backend.service.RawMaterialService;
@@ -16,6 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/raw-materials")
+@CrossOrigin(origins = "*")
 public class RawMaterialController {
 
     private final RawMaterialService  rawMaterialService;

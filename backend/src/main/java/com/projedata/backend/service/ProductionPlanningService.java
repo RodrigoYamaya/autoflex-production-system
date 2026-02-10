@@ -31,7 +31,7 @@ public class ProductionPlanningService {
         List<RawMaterial> allMaterials = rawMaterialRepository.findAll();
 
         Map<Long, Integer> stockMap = allMaterials.stream()
-                .collect(Collectors.toMap(RawMaterial::getId, RawMaterial::getStockQuantity));;
+                .collect(Collectors.toMap(RawMaterial::getId, RawMaterial::getStockQuantity));
 
         List<ProductionPlanItemResponseDTO> planItems = new ArrayList<>();
         BigDecimal grandTotalValue = BigDecimal.ZERO;

@@ -1,11 +1,10 @@
-//exportar as classes do java
-export interface RawMaterial {
 
-    id?:number;
+export interface RawMaterial {
+    id?: number;
     name: string;
     stockQuantity: number;
-
 }
+
 export interface ProductComposition {
     id?: number;
     rawMaterial: RawMaterial;
@@ -20,12 +19,14 @@ export interface Product {
 }
 
 
-export interface ProductionPlanItem {
+export interface ProductionItem {
     productName: string;
-    quantityToProduce: number;
+    quantity: number;
+    unitPrice: number;
+    totalValue: number;
 }
 
-export interface ProductionPlanResponse {
-    productionList: ProductionPlanItem[];
-    grandTotalValue: number;
+export interface PlanningResponse {
+    items: ProductionItem[];
+    grandTotal: number;
 }

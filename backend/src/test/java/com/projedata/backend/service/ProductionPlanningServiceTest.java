@@ -97,6 +97,6 @@ class ProductionPlanningServiceTest {
 
         // Confere o Valor Total Geral:
         // 10 unidades * R$ 500,00 = R$ 5.000,00
-        assertEquals(new BigDecimal("5000.00"), resultado.grandTotalValue());
+        assertEquals(new BigDecimal("5000.00"), resultado.grandTotaPlValue());
     }
 }

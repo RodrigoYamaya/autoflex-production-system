@@ -1,20 +1,21 @@
 import { Routes, Route } from 'react-router-dom';
-import { Layout } from './components/Layout'; // <--- Importe o Layout novo
+import { Layout } from './components/Layout';
+
+import { Dashboard } from './pages/Dashboard';
 import { RawMaterials } from './pages/RawMaterials';
 import { Products } from './pages/Products';
+import { Planning } from './pages/Planning';
 
 export function Router() {
     return (
         <Routes>
-            {/* Envolvemos tudo no Route do Layout */}
             <Route path="/" element={<Layout />}>
+                {}
+                <Route index element={<Dashboard />} />
 
-                {/* Todas essas telas vão renderizar DENTRO do Layout (no lugar do Outlet) */}
-                <Route index element={<h1>🏠 Dashboard Principal</h1>} />
-                <Route path="/products" element={<Products />} />
                 <Route path="/raw-materials" element={<RawMaterials />} />
-                <Route path="/planning" element={<h1>📊 Planejamento</h1>} />
-
+                <Route path="/products" element={<Products />} />
+                <Route path="/planning" element={<Planning />} />
             </Route>
         </Routes>
     );

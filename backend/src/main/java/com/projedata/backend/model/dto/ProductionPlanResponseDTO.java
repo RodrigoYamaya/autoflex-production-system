@@ -5,6 +5,6 @@ import java.util.List;
 
 public record ProductionPlanResponseDTO(
         List<ProductionPlanItemResponseDTO> productionList,
-        BigDecimal grandTotalValue
+        BigDecimal grandTotaPlValue
 ) {
 }

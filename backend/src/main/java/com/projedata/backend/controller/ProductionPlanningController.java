@@ -4,12 +4,14 @@ import com.projedata.backend.model.dto.ProductionPlanResponseDTO;
 import com.projedata.backend.service.ProductionPlanningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/production-planning")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class ProductionPlanningController {
 
