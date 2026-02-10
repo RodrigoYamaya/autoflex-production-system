@@ -20,7 +20,7 @@ public class RawMaterialController {
 
     private final RawMaterialService  rawMaterialService;
 
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<RawMaterialResponseDTo> save(@RequestBody @Valid RawMaterialRequestDTo rawMaterialRequestDTo) {
         RawMaterialResponseDTo rawMaterialSave = rawMaterialService.save(rawMaterialRequestDTo);
         return ResponseEntity.status(HttpStatus.CREATED).body(rawMaterialSave);

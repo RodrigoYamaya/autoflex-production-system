@@ -11,14 +11,12 @@ export function Dashboard() {
                 Selecione um módulo abaixo para começar a gerenciar sua produção.
             </p>
 
-            {/* Grid de Cartões */}
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
                 gap: '30px'
             }}>
 
-                {/* CARD 1: MATÉRIAS-PRIMAS */}
                 <div
                     className="card"
                     onClick={() => navigate('/raw-materials')}
@@ -38,7 +36,6 @@ export function Dashboard() {
                     </p>
                 </div>
 
-                {/* CARD 2: PRODUTOS */}
                 <div
                     className="card"
                     onClick={() => navigate('/products')}
@@ -58,7 +55,6 @@ export function Dashboard() {
                     </p>
                 </div>
 
-                {/* CARD 3: PLANEJAMENTO */}
                 <div
                     className="card"
                     onClick={() => navigate('/planning')}

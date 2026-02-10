@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public record ProductionPlanItemResponseDTO(
         String productName,
-        Integer quantityToProduce,
+        Integer quantity,
         BigDecimal unitPrice,
         BigDecimal totalValue
 ) {

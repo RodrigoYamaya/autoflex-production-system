@@ -11,7 +11,7 @@ export function Planning() {
     async function handleGeneratePlan() {
         setLoading(true);
         try {
-            const response = await api.get('/production-planning');
+            const response = await api.post('/production-plan/calculate');
             setPlan(response.data);
         } catch (error) {
             console.error("Erro ao gerar plano", error);
@@ -25,7 +25,7 @@ export function Planning() {
         <div>
             <h1 style={{ marginBottom: '30px', color: '#2B3674' }}>Planejamento de Produção</h1>
 
-            {}
+
             <div className="card" style={{ marginBottom: '30px', textAlign: 'center', padding: '40px' }}>
                 <div style={{ background: '#F4F7FE', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto' }}>
                     <Factory size={40} color="#4318FF" weight="fill" />
@@ -61,10 +61,9 @@ export function Planning() {
                 </button>
             </div>
 
-            {/* CARD 2: O Resultado */}
+
             {plan && (
                 <div className="card" style={{ border: '2px solid #4318FF', animation: 'fadeIn 0.5s' }}>
-                    {/* Cabeçalho do Resultado */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: '1px solid #eee', paddingBottom: '20px', flexWrap: 'wrap', gap: '20px' }}>
                         <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px', color: '#2B3674' }}>
                             <ChartBar size={28} />
@@ -80,7 +79,6 @@ export function Planning() {
                         </div>
                     </div>
 
-                    {/* Tabela de Itens */}
                     {plan.items && plan.items.length > 0 ? (
                         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                             <thead style={{ background: '#F4F7FE' }}>

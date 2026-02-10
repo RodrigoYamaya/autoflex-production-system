@@ -2,7 +2,6 @@ import { House, Package, Wall, ChartBar } from '@phosphor-icons/react';
 import { NavLink } from 'react-router-dom';
 
 export function Sidebar() {
-    // Função para aplicar o estilo quando o link está ativo
     const linkStyle = ({ isActive }: { isActive: boolean }) => {
         return {
             display: 'flex',
@@ -37,7 +36,6 @@ export function Sidebar() {
                 </h2>
             </div>
 
-            {/* Menu Links */}
             <nav style={{ flex: 1 }}>
                 <NavLink to="/" style={linkStyle} end>
                     <House size={24} weight="fill" />
@@ -60,7 +58,6 @@ export function Sidebar() {
                 </NavLink>
             </nav>
 
-            {/* Rodapé do Menu */}
             <div style={{ padding: '20px', borderTop: '1px solid #eee' }}>
                 <small style={{ color: '#A3AED0' }}>v1.0.0 Back-end Connected</small>
             </div>

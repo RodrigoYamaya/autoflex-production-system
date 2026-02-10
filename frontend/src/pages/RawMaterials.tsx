@@ -1,21 +1,17 @@
-// src/pages/RawMaterials.tsx
 import { useEffect, useState } from 'react';
 import { Trash, Plus } from '@phosphor-icons/react';
 import api from '../services/api';
 import type { RawMaterial } from '../types'; // Aqui usamos type pois é só uma interface
 
 export function RawMaterials() {
-    // --- ESTADO (Memória da Tela) ---
     const [materials, setMaterials] = useState<RawMaterial[]>([]);
     const [name, setName] = useState('');
     const [stock, setStock] = useState(0);
 
-    // --- CARREGAMENTO INICIAL ---
     useEffect(() => {
         loadMaterials();
     }, []);
 
-    // Função para buscar dados (GET)
     async function loadMaterials() {
         try {
             const response = await api.get('/raw-materials');
@@ -26,7 +22,6 @@ export function RawMaterials() {
         }
     }
 
-    // Função para Salvar (POST)
     async function handleSave(e: any) {
         e.preventDefault();
 
@@ -48,7 +43,6 @@ export function RawMaterials() {
         }
     }
 
-    // Função para Deletar (DELETE)
     async function handleDelete(id: number) {
         if(!confirm("Tem certeza que deseja excluir?")) return;
 
@@ -61,12 +55,10 @@ export function RawMaterials() {
         }
     }
 
-    // --- O HTML (VISUAL NOVO COM CARDS) ---
     return (
         <div>
             <h1 style={{ marginBottom: '30px' }}>Gestão de Matérias-primas</h1>
 
-            {/* CARD 1: Formulário de Cadastro */}
             <div className="card">
                 <h3 style={{ marginBottom: '15px', color: '#2B3674' }}>Adicionar Novo Item</h3>
                 <form onSubmit={handleSave} style={{ display: 'flex', gap: '15px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
@@ -108,7 +100,6 @@ export function RawMaterials() {
                 </form>
             </div>
 
-            {/* CARD 2: Tabela de Listagem */}
             <div className="card" style={{ marginTop: '20px' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>

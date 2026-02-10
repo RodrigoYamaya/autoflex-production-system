@@ -88,15 +88,15 @@ class ProductionPlanningServiceTest {
         // Verifica se a lista final tem TAMANHO 1.
         // Por que 1? Porque o Notebook gastou todo o estoque (100).
         // Sobrou 0 para o Banco de Praça. Seu código tem um "if > 0", então o Banco sumiu da lista.
-        assertEquals(1, resultado.productionList().size());
+        assertEquals(1, resultado.items().size());
 
         // Confere a matemática:
         // Estoque (100) / Custo (10) = 10 Unidades produzidas.
-        assertEquals("Notebook Gamer", resultado.productionList().get(0).productName());
-        assertEquals(10, resultado.productionList().get(0).quantityToProduce());
+        assertEquals("Notebook Gamer", resultado.items().get(0).productName());
+        assertEquals(10, resultado.items().get(0).quantity());
 
         // Confere o Valor Total Geral:
         // 10 unidades * R$ 500,00 = R$ 5.000,00
-        assertEquals(new BigDecimal("5000.00"), resultado.grandTotaPlValue());
+        assertEquals(new BigDecimal("5000.00"), resultado.grandTotal());
     }
 }

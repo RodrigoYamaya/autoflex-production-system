@@ -1,15 +1,13 @@
-/* src/index.css */
 :root {
     font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
 
-    /* Cores baseadas na sua imagem */
-    --bg-body: #F4F7FE;       /* Aquele cinza azulado claro do fundo */
-    --bg-sidebar: #FFFFFF;    /* Branco puro */
-    --text-primary: #2B3674;  /* Azul escuro quase preto (para títulos) */
-    --text-secondary: #A3AED0;/* Cinza para textos secundários */
-    --primary-color: #4318FF; /* Azul destaque (botões/links ativos) */
+    --bg-body: #F4F7FE;
+    --bg-sidebar: #FFFFFF;
+    --text-primary: #2B3674;
+    --text-secondary: #A3AED0;
+    --primary-color: #4318FF;
 }
 
 body {
@@ -20,7 +18,6 @@ body {
     min-height: 100vh;
 }
 
-/* Reset básico */
 * {
     box-sizing: border-box;
 }
@@ -30,16 +27,14 @@ h1, h2, h3 {
     margin-top: 0;
 }
 
-/* Estilo dos Cards (As caixas brancas da imagem) */
 .card {
     background: white;
-    border-radius: 20px; /* Bordas bem arredondadas igual da imagem */
+    border-radius: 20px;
     padding: 24px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05); /* Sombra suave */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
     margin-bottom: 20px;
 }
 
-/* Estilo dos Inputs e Botões para ficar igual da imagem */
 input {
     border: 1px solid #E0E5F2;
     border-radius: 10px;
