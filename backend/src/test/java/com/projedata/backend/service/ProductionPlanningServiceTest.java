@@ -76,7 +76,7 @@ class ProductionPlanningServiceTest {
         when(productRepository.findAllWithCompositionsOrderedByPrice())
                 .thenReturn(Arrays.asList(produtoCaro, produtoBarato));
 
-        //vai retornar lista dos materias(when e semlehante metodo estatico)
+        //vai retornar lista dos materias(when e semelhante metodo estatico)
         when(rawMaterialRepository.findAll())
                 .thenReturn(List.of(rawMaterial));
 
