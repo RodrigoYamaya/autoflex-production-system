@@ -1,22 +1,26 @@
-// src/pages/Products.tsx
-import { useEffect, useState, FormEvent } from 'react'; // Adicionei FormEvent para tipagem correta
-import { Trash, Plus, Package, ShoppingCart } from '@phosphor-icons/react';
+import { useEffect, useState,  } from 'react';
+import { Trash, Plus, Package, ShoppingCart, PencilSimple, X } from '@phosphor-icons/react'; // Adicionei PencilSimple e X
 import api from '../services/api';
 import type { Product, RawMaterial, ProductComposition } from '../types';
+import * as React from "react";
 
 export function Products() {
     // --- ESTADOS ---
     const [products, setProducts] = useState<Product[]>([]);
     const [rawMaterials, setRawMaterials] = useState<RawMaterial[]>([]);
 
+    // Estados do Formulário
     const [name, setName] = useState('');
     const [price, setPrice] = useState(0);
+
+    // NOVO: Estado para controlar Edição
+    const [editingId, setEditingId] = useState<number | null>(null);
 
     // Controle do Formulário de Ingredientes
     const [selectedMaterialId, setSelectedMaterialId] = useState<string>('');
     const [quantity, setQuantity] = useState(0);
 
-    // Lista visual (para o usuário ver na tela antes de salvar)
+    // Lista visual da receita
     const [composition, setComposition] = useState<ProductComposition[]>([]);
 
     useEffect(() => {
@@ -42,7 +46,7 @@ export function Products() {
         }
     }
 
-    // Adiciona na lista visual (Front-end)
+    // --- MANIPULAÇÃO DA RECEITA (INGREDIENTES) ---
     function handleAddIngredient() {
         if (!selectedMaterialId || quantity <= 0) {
             return alert("Selecione um material e uma quantidade válida!");
@@ -51,7 +55,10 @@ export function Products() {
         const material = rawMaterials.find(m => m.id === Number(selectedMaterialId));
         if (!material) return;
 
-        // Monta o objeto visualmente para a tabela
+        // Evita duplicatas visuais
+        const exists = composition.find(c => c.rawMaterial.id === material.id);
+        if (exists) return alert("Esse material já está na lista!");
+
         const newItem: ProductComposition = {
             rawMaterial: material,
             requiredQuantity: quantity
@@ -66,48 +73,76 @@ export function Products() {
         setComposition(composition.filter((_, index) => index !== indexToRemove));
     }
 
-    // --- AQUI ESTAVA O PROBLEMA E AQUI ESTÁ A CORREÇÃO ---
-    async function handleSaveProduct(e: FormEvent) {
-        e.preventDefault();
+    // --- FUNÇÕES DE SALVAR / EDITAR (CORRIGIDAS) ---
+
+    // 1. Preenche o formulário para editar
+    function handleEdit(product: Product) {
+        setName(product.name);
+        setPrice(product.price);
+        // O Back-end manda 'compositions', o Front usa 'composition'.
+        // O Java já manda o objeto completo, então podemos setar direto.
+        setComposition(product.compositions || []);
+        setEditingId(product.id!); // Entra no modo edição
+
+        // Rola a página para cima
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 2. Cancela a edição e limpa tudo
+    function handleCancelEdit() {
+        setName('');
+        setPrice(0);
+        setComposition([]);
+        setEditingId(null);
+        setSelectedMaterialId('');
+        setQuantity(0);
+    }
+
+    // 3. Salva (Cria ou Atualiza)
+    async function handleSaveProduct(e: React.FormEvent) {        e.preventDefault();
 
         if (!name || price <= 0 || composition.length === 0) {
             return alert("Preencha nome, preço e adicione ingredientes!");
         }
 
-        // 1. CONVERSÃO MÁGICA ✨
-        // Transformamos a lista visual (objetos completos) no formato que o Java entende (IDs)
+        // Formata para o padrão que o Java espera (IDs)
         const formattedCompositions = composition.map(item => ({
-            rawMaterialId: item.rawMaterial.id, // Pega só o ID
+            rawMaterialId: item.rawMaterial.id,
             requiredQuantity: item.requiredQuantity
         }));
 
-        // 2. Monta o objeto final
-        const newProduct = {
+        const productData = {
             name,
             price,
-            compositions: formattedCompositions // Envia a lista formatada
+            compositions: formattedCompositions
         };
 
         try {
-            await api.post('/products', newProduct);
-            alert("Produto salvo com sucesso!");
+            if (editingId) {
+                // --- MODO EDIÇÃO (PUT) ---
+                await api.put(`/products/${editingId}`, productData);
+                alert("Produto atualizado com sucesso!");
+            } else {
+                // --- MODO CRIAÇÃO (POST) ---
+                await api.post('/products', productData);
+                alert("Produto salvo com sucesso!");
+            }
 
-            // Limpa tudo
-            setName('');
-            setPrice(0);
-            setComposition([]);
-            loadProducts(); // Recarrega a tabela
+            // Limpa tudo e recarrega
+            handleCancelEdit();
+            loadProducts();
         } catch (error) {
             console.error(error);
-            alert("Erro ao salvar! Verifique o console.");
+            alert("Erro ao salvar! Verifique se o Back-end está rodando.");
         }
     }
 
     async function handleDelete(id: number) {
-        if (!confirm("Tem certeza?")) return;
+        if (!confirm("Tem certeza? Isso apagará o produto.")) return;
         try {
             await api.delete(`/products/${id}`);
             loadProducts();
+            if (editingId === id) handleCancelEdit();
         } catch (error) {
             alert("Erro ao deletar.");
         }
@@ -119,10 +154,22 @@ export function Products() {
 
             {/* CARD 1: FORMULÁRIO */}
             <div className="card" style={{ marginBottom: '30px' }}>
-                <h3 style={{ color: '#2B3674', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Package size={24} />
-                    Novo Produto
-                </h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <h3 style={{ color: '#2B3674', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {editingId ? <PencilSimple size={24} /> : <Package size={24} />}
+                        {editingId ? 'Editar Produto' : 'Novo Produto'}
+                    </h3>
+
+                    {/* Botão Cancelar Edição */}
+                    {editingId && (
+                        <button
+                            onClick={handleCancelEdit}
+                            style={{ background: 'transparent', border: 'none', color: '#E53E3E', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 'bold' }}
+                        >
+                            <X size={18} /> Cancelar
+                        </button>
+                    )}
+                </div>
 
                 <form onSubmit={handleSaveProduct}>
                     <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
@@ -133,7 +180,7 @@ export function Products() {
                                 placeholder="Ex: Mesa de Jantar"
                                 value={name}
                                 onChange={e => setName(e.target.value)}
-                                style={{ width: '100%' }}
+                                style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #E0E5F2' }}
                             />
                         </div>
                         <div style={{ flex: 1 }}>
@@ -143,7 +190,7 @@ export function Products() {
                                 placeholder="0.00"
                                 value={price}
                                 onChange={e => setPrice(Number(e.target.value))}
-                                style={{ width: '100%' }}
+                                style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #E0E5F2' }}
                             />
                         </div>
                     </div>
@@ -174,7 +221,7 @@ export function Products() {
                                 type="number"
                                 value={quantity}
                                 onChange={e => setQuantity(Number(e.target.value))}
-                                style={{ width: '100%' }}
+                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #E0E5F2' }}
                             />
                         </div>
                         <button
@@ -219,9 +266,25 @@ export function Products() {
                     )}
 
                     <div style={{ marginTop: '30px', textAlign: 'right' }}>
-                        <button type="submit" style={{ background: '#4318FF', color: 'white', padding: '12px 30px', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 10px rgba(67, 24, 255, 0.2)' }}>
-                            <Package size={20} weight="fill" />
-                            SALVAR PRODUTO
+                        <button
+                            type="submit"
+                            style={{
+                                background: editingId ? '#FFB547' : '#4318FF', // Laranja se editar, Roxo se criar
+                                color: editingId ? '#1B2559' : 'white',
+                                padding: '12px 30px',
+                                border: 'none',
+                                borderRadius: '10px',
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                boxShadow: '0 4px 10px rgba(67, 24, 255, 0.2)'
+                            }}
+                        >
+                            {editingId ? <PencilSimple size={20} weight="fill" /> : <Package size={20} weight="fill" />}
+                            {editingId ? 'ATUALIZAR PRODUTO' : 'SALVAR PRODUTO'}
                         </button>
                     </div>
                 </form>
@@ -236,7 +299,7 @@ export function Products() {
                         <th style={{ padding: '15px' }}>Produto</th>
                         <th style={{ padding: '15px' }}>Preço Venda</th>
                         <th style={{ padding: '15px' }}>Receita (BOM)</th>
-                        <th style={{ padding: '15px', textAlign: 'center' }}>Ações</th>
+                        <th style={{ padding: '15px', textAlign: 'right' }}>Ações</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -252,8 +315,22 @@ export function Products() {
                                     </div>
                                 ))}
                             </td>
-                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                                <button onClick={() => handleDelete(prod.id!)} style={{ background: '#FFF0F0', color: '#E53E3E', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer', transition: '0.2s' }}>
+                            <td style={{ padding: '15px', textAlign: 'right', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                                {/* Botão EDITAR (Novo) */}
+                                <button
+                                    onClick={() => handleEdit(prod)}
+                                    style={{ background: '#E0E5F2', color: '#4318FF', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
+                                    title="Editar"
+                                >
+                                    <PencilSimple size={18} weight="fill" />
+                                </button>
+
+                                {/* Botão EXCLUIR */}
+                                <button
+                                    onClick={() => handleDelete(prod.id!)}
+                                    style={{ background: '#FFF0F0', color: '#E53E3E', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
+                                    title="Excluir"
+                                >
                                     <Trash size={18} weight="fill" />
                                 </button>
                             </td>
