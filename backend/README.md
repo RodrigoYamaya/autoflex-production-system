@@ -148,4 +148,4 @@ Clean and modular frontend structure
 
 👨‍💻 Author
 
-Rodrigo Yamaya Gonçal
+Rodrigo Yamaya 
